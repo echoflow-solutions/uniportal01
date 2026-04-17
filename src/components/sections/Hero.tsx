@@ -110,7 +110,7 @@ export function Hero() {
               <Magnetic>
                 <button
                   type="button"
-                  onClick={openNotice}
+                  onClick={() => openNotice('hero_enter_the_product')}
                   className="button-ink focus-ring group"
                 >
                   Enter the product

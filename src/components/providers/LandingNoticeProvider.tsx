@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useMemo, useState } from 'react'
+import { track } from '@vercel/analytics'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,7 @@ import {
 } from '@/components/ui/dialog'
 
 type LandingNoticeContextValue = {
-  openNotice: () => void
+  openNotice: (source?: string) => void
 }
 
 const LandingNoticeContext = createContext<LandingNoticeContextValue | null>(null)
@@ -21,7 +22,12 @@ export function LandingNoticeProvider({ children }: { children: React.ReactNode 
 
   const value = useMemo(
     () => ({
-      openNotice: () => setIsOpen(true),
+      openNotice: (source?: string) => {
+        track('landing_notice_opened', {
+          source: source ?? 'unknown',
+        })
+        setIsOpen(true)
+      },
     }),
     []
   )
@@ -75,6 +81,7 @@ export function LandingNoticeProvider({ children }: { children: React.ReactNode 
               </button>
               <a
                 href="mailto:hello@uniportal.com.au"
+                onClick={() => track('developer_contact_clicked', { source: 'landing_notice' })}
                 className="button-secondary focus-ring w-fit justify-center"
               >
                 Contact the developer

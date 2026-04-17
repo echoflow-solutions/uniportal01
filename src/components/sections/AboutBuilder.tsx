@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import { track } from '@vercel/analytics'
 import { Reveal } from '@/components/ui/Reveal'
 import { Kicker } from '@/components/ui/Kicker'
 import { InkRule } from '@/components/ui/InkRule'
@@ -107,6 +110,7 @@ export function AboutBuilder() {
                   href="https://www.linkedin.com/in/bernardadjei-yeboah/"
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => track('builder_link_clicked', { link: 'linkedin' })}
                   className="button-ink focus-ring justify-center"
                 >
                   LinkedIn
@@ -115,12 +119,14 @@ export function AboutBuilder() {
                   href="https://bernardadjei.com"
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => track('builder_link_clicked', { link: 'website' })}
                   className="button-secondary focus-ring justify-center"
                 >
                   bernardadjei.com
                 </a>
                 <a
                   href="mailto:bernardadjei10@gmail.com"
+                  onClick={() => track('builder_link_clicked', { link: 'email' })}
                   className="button-secondary focus-ring justify-center"
                 >
                   bernardadjei10@gmail.com
@@ -128,7 +134,11 @@ export function AboutBuilder() {
               </div>
 
               <div className="mt-4 flex flex-wrap items-center gap-6">
-                <a href="#trust-compliance" className="button-secondary focus-ring">
+                <a
+                  href="#trust-compliance"
+                  onClick={() => track('builder_link_clicked', { link: 'technical_position' })}
+                  className="button-secondary focus-ring"
+                >
                   See the technical position
                 </a>
               </div>

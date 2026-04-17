@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { track } from '@vercel/analytics'
 import Link from 'next/link'
 import { useLandingNotice } from '@/components/providers/LandingNoticeProvider'
 
@@ -56,12 +57,16 @@ export function Nav() {
           <div className="flex items-center gap-5">
             <button
               type="button"
-              onClick={openNotice}
+              onClick={() => openNotice('nav_log_in')}
               className="focus-ring text-sm font-medium text-[var(--graphite)] transition-colors hover:text-[var(--ink)]"
             >
               Log in
             </button>
-            <Link href="/#platform-coverage" className="button-ink focus-ring hidden sm:inline-flex">
+            <Link
+              href="/#platform-coverage"
+              onClick={() => track('landing_cta_clicked', { cta: 'see_the_product', location: 'nav' })}
+              className="button-ink focus-ring hidden sm:inline-flex"
+            >
               See the product
             </Link>
           </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { track } from '@vercel/analytics'
 import { ArrowRight } from 'lucide-react'
 import { Reveal } from '@/components/ui/Reveal'
 import { InkRule } from '@/components/ui/InkRule'
@@ -25,11 +26,19 @@ export function Closing() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
-            <button type="button" onClick={openNotice} className="button-ink focus-ring">
+            <button
+              type="button"
+              onClick={() => openNotice('closing_enter_the_product')}
+              className="button-ink focus-ring"
+            >
               Enter the product
               <ArrowRight className="h-4 w-4" />
             </button>
-            <a href="#trust-compliance" className="button-secondary focus-ring">
+            <a
+              href="#trust-compliance"
+              onClick={() => track('landing_cta_clicked', { cta: 'technical_brief', location: 'closing' })}
+              className="button-secondary focus-ring"
+            >
               Read the technical brief
             </a>
           </div>
