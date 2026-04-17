@@ -1,12 +1,49 @@
 'use client'
 
-import { DemoControls } from '@/components/demo/DemoControls'
+import { useEffect } from 'react'
+import Lenis from 'lenis'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollProgress } from '@/components/ui/ScrollProgress'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    if (reducedMotion.matches) {
+      return
+    }
+
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 0.92,
+    })
+
+    const updateScrollTrigger = () => ScrollTrigger.update()
+    lenis.on('scroll', updateScrollTrigger)
+
+    const tick = (time: number) => {
+      lenis.raf(time * 1000)
+    }
+
+    gsap.ticker.add(tick)
+    gsap.ticker.lagSmoothing(0)
+
+    return () => {
+      lenis.off('scroll', updateScrollTrigger)
+      gsap.ticker.remove(tick)
+      lenis.destroy()
+    }
+  }, [])
+
   return (
     <>
+      <ScrollProgress />
       {children}
-      <DemoControls />
     </>
   )
 }

@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation'
+import { LoginExperience } from '@/components/auth/LoginExperience'
 
 export default function LoginPage() {
-  redirect('/')
+  return <LoginExperience />
 }

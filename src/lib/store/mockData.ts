@@ -159,6 +159,25 @@ Complete across minimum 8 sessions with at least 6 hours active time.`,
     minSessions: 8,
     minActiveTimeMinutes: 360,
   },
+  {
+    id: 'assignment4',
+    courseId: 'course1',
+    title: 'Research Reflection Essay',
+    description: 'Write a reflective essay on your research journey, discussing challenges faced, lessons learned, and how your understanding evolved throughout the project.',
+    instructions: `Your reflection essay should cover:
+1. Initial expectations vs reality
+2. Key challenges and how you overcame them
+3. Most significant learnings
+4. How your research skills developed
+5. What you would do differently
+6. Future research directions
+
+Length: 1500-2000 words
+Complete across minimum 2 sessions with at least 45 minutes active time.`,
+    dueDate: daysFromNow(14),
+    minSessions: 2,
+    minActiveTimeMinutes: 45,
+  },
 ]
 
 // ============================================================================

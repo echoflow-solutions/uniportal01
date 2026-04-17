@@ -24,6 +24,7 @@ import {
   GraduationCap,
   Bot,
   Library,
+  PenLine,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
@@ -36,6 +37,10 @@ const mainNavItems = [
   { href: '/student/submissions', label: 'My Submissions', icon: Send },
   { href: '/student/grades', label: 'Grades', icon: BarChart3 },
   { href: '/student/library', label: 'Library', icon: Library },
+]
+
+const truelearnNavItems = [
+  { href: '/student/write', label: 'TrueLearn Write', icon: PenLine },
 ]
 
 const managementNavItems = [
@@ -182,6 +187,16 @@ export function StudentSidebar() {
             <p className="px-3 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Main</p>
           )}
           {mainNavItems.map((item) => (
+            <NavLink key={item.href} item={item} />
+          ))}
+        </div>
+
+        {/* TrueLearn */}
+        <div className="space-y-0.5">
+          {!isCollapsed && (
+            <p className="px-3 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">TrueLearn</p>
+          )}
+          {truelearnNavItems.map((item) => (
             <NavLink key={item.href} item={item} />
           ))}
         </div>

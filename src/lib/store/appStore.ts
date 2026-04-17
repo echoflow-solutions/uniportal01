@@ -11,6 +11,8 @@ import type {
   IntegrityReport,
   AuthorshipAnalytics,
   VerificationResponse,
+  ActiveWritingSession,
+  PasteEvent,
 } from '@/types'
 import {
   mockUsers,
@@ -36,6 +38,10 @@ interface AppState {
   integrityReports: IntegrityReport[]
   isInitialized: boolean
 
+  // Active Writing State
+  activeWritingSession: ActiveWritingSession | null
+  pasteEvents: PasteEvent[]
+
   // UI State
   sidebarCollapsed: boolean
   setSidebarCollapsed: (collapsed: boolean) => void
@@ -60,6 +66,7 @@ interface AppState {
   getStudentsByCourse: (courseId: string) => User[]
   getInstructorCourses: () => Course[]
   getStudentCourses: () => Course[]
+  getOrCreateSubmission: (assignmentId: string) => Submission
 
   // Mutation Actions
   updateSubmission: (id: string, data: Partial<Submission>) => void
@@ -72,6 +79,15 @@ interface AppState {
     response: string
   ) => void
   createSubmission: (assignmentId: string) => Submission
+
+  // Active Writing Actions
+  startActiveSession: (submissionId: string) => ActiveWritingSession
+  updateActiveSession: (data: Partial<ActiveWritingSession>) => void
+  endActiveSession: () => void
+  recordKeystroke: () => void
+  recordPaste: (wordCount: number, isDeclared: boolean, source?: string) => void
+  setIdleStatus: (isIdle: boolean) => void
+  saveSessionToHistory: () => void
 
   // Demo Actions
   resetToInitialState: () => void
@@ -94,6 +110,10 @@ export const useAppStore = create<AppState>()(
       verificationTests: [],
       integrityReports: [],
       isInitialized: false,
+
+      // Active Writing State
+      activeWritingSession: null,
+      pasteEvents: [],
 
       // UI State
       sidebarCollapsed: false,
@@ -256,6 +276,23 @@ export const useAppStore = create<AppState>()(
         return courses.filter((c) => c.studentIds.includes(currentUser.id))
       },
 
+      getOrCreateSubmission: (assignmentId: string) => {
+        const { currentUser, submissions, createSubmission } = get()
+        if (!currentUser || currentUser.role !== 'student') {
+          throw new Error('Must be logged in as a student')
+        }
+
+        // Check for existing draft submission
+        const existing = submissions.find(
+          (s) => s.assignmentId === assignmentId &&
+                 s.studentId === currentUser.id &&
+                 s.status === 'draft'
+        )
+
+        if (existing) return existing
+        return createSubmission(assignmentId)
+      },
+
       // Mutation Actions
       updateSubmission: (id: string, data: Partial<Submission>) => {
         set((state) => ({
@@ -348,6 +385,137 @@ export const useAppStore = create<AppState>()(
         return newSubmission
       },
 
+      // Active Writing Actions
+      startActiveSession: (submissionId: string) => {
+        const newSession: ActiveWritingSession = {
+          id: `active-${generateId()}`,
+          submissionId,
+          startedAt: new Date().toISOString(),
+          keystrokeCount: 0,
+          wordsTyped: 0,
+          wordsPasted: 0,
+          declaredPasteWords: 0,
+          undeclaredPasteWords: 0,
+          pasteEvents: 0,
+          editEvents: 0,
+          lastActivityAt: new Date().toISOString(),
+          isIdle: false,
+        }
+        set({ activeWritingSession: newSession })
+        return newSession
+      },
+
+      updateActiveSession: (data: Partial<ActiveWritingSession>) => {
+        set((state) => ({
+          activeWritingSession: state.activeWritingSession
+            ? { ...state.activeWritingSession, ...data }
+            : null,
+        }))
+      },
+
+      endActiveSession: () => {
+        const { activeWritingSession, saveSessionToHistory } = get()
+        if (activeWritingSession) {
+          saveSessionToHistory()
+          set({ activeWritingSession: null, pasteEvents: [] })
+        }
+      },
+
+      recordKeystroke: () => {
+        set((state) => {
+          if (!state.activeWritingSession) return state
+          return {
+            activeWritingSession: {
+              ...state.activeWritingSession,
+              keystrokeCount: state.activeWritingSession.keystrokeCount + 1,
+              lastActivityAt: new Date().toISOString(),
+              isIdle: false,
+            },
+          }
+        })
+      },
+
+      recordPaste: (wordCount: number, isDeclared: boolean, source?: string) => {
+        const { activeWritingSession } = get()
+        if (!activeWritingSession) return
+
+        const pasteEvent: PasteEvent = {
+          id: `paste-${generateId()}`,
+          sessionId: activeWritingSession.id,
+          timestamp: new Date().toISOString(),
+          wordCount,
+          characterCount: wordCount * 5, // Approximate
+          isDeclared,
+          source,
+        }
+
+        set((state) => ({
+          pasteEvents: [...state.pasteEvents, pasteEvent],
+          activeWritingSession: state.activeWritingSession
+            ? {
+                ...state.activeWritingSession,
+                wordsPasted: state.activeWritingSession.wordsPasted + wordCount,
+                declaredPasteWords: isDeclared
+                  ? state.activeWritingSession.declaredPasteWords + wordCount
+                  : state.activeWritingSession.declaredPasteWords,
+                undeclaredPasteWords: !isDeclared
+                  ? state.activeWritingSession.undeclaredPasteWords + wordCount
+                  : state.activeWritingSession.undeclaredPasteWords,
+                pasteEvents: state.activeWritingSession.pasteEvents + 1,
+                lastActivityAt: new Date().toISOString(),
+                isIdle: false,
+              }
+            : null,
+        }))
+      },
+
+      setIdleStatus: (isIdle: boolean) => {
+        set((state) => ({
+          activeWritingSession: state.activeWritingSession
+            ? { ...state.activeWritingSession, isIdle }
+            : null,
+        }))
+      },
+
+      saveSessionToHistory: () => {
+        const { activeWritingSession, pasteEvents } = get()
+        if (!activeWritingSession) return
+
+        const startTime = new Date(activeWritingSession.startedAt).getTime()
+        const endTime = new Date().getTime()
+        const activeTimeSeconds = Math.round((endTime - startTime) / 1000)
+
+        const historicalSession: WritingSession = {
+          id: `session-${generateId()}`,
+          submissionId: activeWritingSession.submissionId,
+          startedAt: activeWritingSession.startedAt,
+          endedAt: new Date().toISOString(),
+          activeTimeSeconds,
+          wordsTyped: activeWritingSession.wordsTyped,
+          wordsPasted: activeWritingSession.wordsPasted,
+          pasteEvents: activeWritingSession.pasteEvents,
+          editEvents: activeWritingSession.editEvents,
+        }
+
+        // Create writing events for paste events
+        const writingEvents: WritingEvent[] = pasteEvents.map((pe) => ({
+          id: `event-${generateId()}`,
+          sessionId: historicalSession.id,
+          type: 'paste' as const,
+          timestamp: pe.timestamp,
+          data: {
+            wordCount: pe.wordCount,
+            isDeclared: pe.isDeclared,
+            source: pe.source,
+          },
+        }))
+
+        set((state) => ({
+          writingSessions: [...state.writingSessions, historicalSession],
+          writingEvents: [...state.writingEvents, ...writingEvents],
+        }))
+      },
+
       // Demo Actions
       resetToInitialState: () => {
         set({
@@ -366,7 +534,15 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'uniportal-storage',
+      version: 2, // Increment this to force reload mock data
       storage: createJSONStorage(() => localStorage),
+      migrate: (persistedState, version) => {
+        // When version changes, reset isInitialized to force reload of mock data
+        if (version < 2) {
+          return { isInitialized: false }
+        }
+        return persistedState as Record<string, unknown>
+      },
       partialize: (state) => ({
         currentUser: state.currentUser,
         users: state.users,

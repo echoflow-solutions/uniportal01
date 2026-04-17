@@ -106,3 +106,29 @@ export interface AuthorshipAnalytics {
   sessionDistribution: { date: string; minutes: number }[]
   typingPattern: { time: string; wpm: number }[]
 }
+
+// Writing Environment Types
+export interface ActiveWritingSession {
+  id: string
+  submissionId: string
+  startedAt: string
+  keystrokeCount: number
+  wordsTyped: number
+  wordsPasted: number
+  declaredPasteWords: number
+  undeclaredPasteWords: number
+  pasteEvents: number
+  editEvents: number
+  lastActivityAt: string
+  isIdle: boolean
+}
+
+export interface PasteEvent {
+  id: string
+  sessionId: string
+  timestamp: string
+  wordCount: number
+  characterCount: number
+  isDeclared: boolean
+  source?: string
+}
