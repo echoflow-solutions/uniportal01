@@ -55,6 +55,13 @@ export function Nav() {
           </Link>
 
           <div className="flex items-center gap-5">
+            <Link
+              href="/demo"
+              onClick={() => track('landing_cta_clicked', { cta: 'demo', location: 'nav' })}
+              className="focus-ring text-sm font-medium text-[var(--graphite)] transition-colors hover:text-[var(--ink)]"
+            >
+              Demo
+            </Link>
             <button
               type="button"
               onClick={() => openNotice('nav_log_in')}

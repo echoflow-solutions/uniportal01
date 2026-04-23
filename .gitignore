@@ -37,3 +37,7 @@ next-env.d.ts
 
 # screenshots
 /screenshots/
+
+# local tooling / personal assets (not referenced by the app)
+/.claude/
+/Bernard Professional Portrait.png

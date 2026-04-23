@@ -56,6 +56,37 @@ function TraceFigure() {
   )
 }
 
+function VerifyFigure() {
+  return (
+    <div className="rounded-[28px] border border-[rgba(10,10,10,0.08)] bg-[var(--paper-deep)] p-6 md:p-8">
+      <p className="font-mono-ui text-[12px] uppercase tracking-[0.2em] text-[var(--ash)]">
+        Verify engine · Live during writing
+      </p>
+      <div className="mt-5 space-y-4">
+        <div className="rounded-[22px] border border-[rgba(10,10,10,0.08)] bg-white/74 p-5">
+          <p className="font-mono-ui text-[11px] uppercase tracking-[0.18em] text-[var(--pending)]">
+            Comprehension check incoming · 00:09
+          </p>
+          <p className="mt-3 text-[16px] leading-[1.7] text-[var(--graphite)]">
+            UniPortal interrupts writing with random, timed checks on content the student just produced.
+          </p>
+        </div>
+        <div className="rounded-[22px] border border-[rgba(10,10,10,0.08)] bg-white/74 p-5">
+          <p className="font-mono-ui text-[11px] uppercase tracking-[0.18em] text-[var(--flagged)]">
+            Adaptive signal
+          </p>
+          <p className="mt-3 text-[16px] leading-[1.7] text-[var(--graphite)]">
+            Sixty seconds to explain. Scores accumulate into the integrity score. Strong students see fewer checks, struggling students see more.
+          </p>
+        </div>
+      </div>
+      <div className="mt-6">
+        <MonoMeta>SYSTEM VERIFICATION · Real-time · Adaptive frequency · Accommodation-aware</MonoMeta>
+      </div>
+    </div>
+  )
+}
+
 function StyleComparison() {
   return (
     <div className="grid gap-8 lg:grid-cols-2">
@@ -131,8 +162,11 @@ export function FeatureSequence() {
         <Reveal className="max-w-[36rem]">
           <Kicker>Inside the Product</Kicker>
           <h2 className="mt-6 font-display text-[clamp(2.5rem,5vw,5rem)] font-semibold leading-[0.96] tracking-[-0.04em] text-[var(--ink)] text-balance">
-            Five product surfaces. One evidence standard.
+            Six product surfaces. One evidence standard.
           </h2>
+          <div className="mt-6">
+            <MonoMeta>COMPOSE · TRACE · VERIFY · PROVE · MATCH · INSIGHT</MonoMeta>
+          </div>
         </Reveal>
 
         <div className="mt-20 space-y-28">
@@ -161,6 +195,24 @@ export function FeatureSequence() {
             <TraceFigure />
           </Reveal>
 
+          <Reveal className="grid gap-12 xl:grid-cols-12 xl:items-center xl:gap-16">
+            <div className="xl:col-span-5">
+              <Kicker>Verify</Kicker>
+              <h3 className="mt-5 font-display text-[clamp(1.9rem,3vw,3rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-[var(--ink)] text-balance">
+                Live comprehension checks during writing.
+              </h3>
+              <p className="mt-6 max-w-[44ch] text-[16px] leading-[1.75] text-[var(--graphite)]">
+                UniPortal interrupts writing with random, timed checks on content the student just produced. Sixty seconds to explain. Scores accumulate into the integrity score, with adaptive frequency and accommodation-aware pacing.
+              </p>
+              <div className="mt-6">
+                <MonoMeta>SYSTEM VERIFICATION · Real-time · Adaptive frequency · Accommodation-aware</MonoMeta>
+              </div>
+            </div>
+            <div className="xl:col-span-7">
+              <VerifyFigure />
+            </div>
+          </Reveal>
+
           <Reveal className="space-y-8">
             <div className="mx-auto max-w-[44rem] text-center">
               <Kicker>Prove</Kicker>
@@ -168,7 +220,7 @@ export function FeatureSequence() {
                 If you can teach it, you know it.
               </h3>
               <p className="mx-auto mt-6 max-w-[44ch] text-[16px] leading-[1.75] text-[var(--graphite)]">
-                Claude-generated questions across simplify, justify, counter, extend, process, and connect probe whether the student can defend their own work.
+                After submission, Claude-generated questions across simplify, justify, counter, extend, process, and connect probe whether the student can defend their own work — the final check on top of the live comprehension checks captured during writing.
               </p>
             </div>
             <TeachingTestMini />

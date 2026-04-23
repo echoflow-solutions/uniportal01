@@ -238,7 +238,7 @@ function StudentDashboardFigure() {
           />
           <MonoMeta className="text-[rgba(250,247,242,0.78)]">AI study assistant</MonoMeta>
           <p className="mt-3 font-display text-[clamp(1.7rem,2.1vw,2rem)] leading-[1] tracking-[-0.04em]">
-            Powered by GPT-4
+            Powered by GPT-5
           </p>
           <p className="mt-4 max-w-[34ch] text-[14px] leading-[1.7] text-[rgba(250,247,242,0.88)]">
             Instant help with assignments, research, and study materials — without leaving the student workflow.
@@ -299,7 +299,7 @@ export function StudentWorkspace() {
               'The deadlines and schedule surfaces show that UniPortal already behaves like a student planning environment, not merely a submission portal.',
               'Fee status and statement access extend the platform into administrative workflows that students actually revisit during the term.',
               'The TrueLearn breakdown makes the scoring model legible by exposing authorship, comprehension, and consistency as separate evidence pillars.',
-              'The AI Study Assistant, explicitly presented as GPT-4-powered, gives the platform a visible model layer that supports learning rather than just policing it.',
+              'The AI Study Assistant, explicitly presented as GPT-5-powered, gives the platform a visible model layer that supports learning rather than just policing it.',
             ].map((item) => (
               <p key={item} className="text-[15.5px] leading-[1.78] text-[var(--graphite)]">
                 {item}

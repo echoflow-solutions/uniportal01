@@ -4,12 +4,17 @@ import { useCallback, useEffect, useState, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
+import TextAlign from '@tiptap/extension-text-align'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAppStore } from '@/lib/store/appStore'
 import {
   Bold,
   Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
   Heading1,
   Heading2,
   Heading3,
@@ -18,7 +23,14 @@ import {
   Quote,
   Undo,
   Redo,
-  Type
+  Type,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Link2,
+  Minus,
+  RemoveFormatting
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -89,6 +101,19 @@ export function WritingEditor({
       Placeholder.configure({
         placeholder,
       }),
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        HTMLAttributes: {
+          target: '_blank',
+          rel: 'noopener noreferrer nofollow',
+          class: 'text-blue-600 underline underline-offset-2',
+        },
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
     ],
     content,
     editable: !readOnly,
@@ -112,7 +137,7 @@ export function WritingEditor({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose-base lg:prose-lg max-w-none focus:outline-none min-h-[400px] px-4 py-3',
+        class: 'prose prose-sm sm:prose-base lg:prose-lg max-w-none focus:outline-none min-h-full px-4 py-3',
       },
       handlePaste: (view, event) => {
         const text = event.clipboardData?.getData('text/plain') || ''
@@ -139,6 +164,36 @@ export function WritingEditor({
     }
   }, [editor, content])
 
+  useEffect(() => {
+    if (!editor) return
+
+    const currentHtml = editor.getHTML()
+    if (content !== currentHtml) {
+      editor.commands.setContent(content || '', { emitUpdate: false })
+      setWordCount(countWords(content || ''))
+      setCharCount(countChars(content || ''))
+    }
+  }, [content, editor])
+
+  const handleSetLink = useCallback(() => {
+    if (!editor) return
+    const previousUrl = editor.getAttributes('link').href as string | undefined
+    const url = window.prompt('Enter URL', previousUrl ?? 'https://')
+    if (url === null) {
+      return
+    }
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+      return
+    }
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange('link')
+      .setLink({ href: url })
+      .run()
+  }, [editor])
+
   if (!editor) {
     return (
       <div className="rounded-lg border bg-white">
@@ -148,6 +203,8 @@ export function WritingEditor({
       </div>
     )
   }
+
+  const readingTime = Math.max(1, Math.ceil(wordCount / 220))
 
   const ToolbarButton = ({
     onClick,
@@ -184,7 +241,7 @@ export function WritingEditor({
   )
 
   return (
-    <div className="rounded-lg border bg-white overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-white">
       {/* Toolbar */}
       {!readOnly && (
         <div className="flex items-center gap-1 px-3 py-2 border-b bg-gray-50/80 flex-wrap">
@@ -203,6 +260,20 @@ export function WritingEditor({
               tooltip="Italic (Ctrl+I)"
             >
               <Italic className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              isActive={editor.isActive('underline')}
+              tooltip="Underline (Ctrl+U)"
+            >
+              <UnderlineIcon className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+              isActive={editor.isActive('strike')}
+              tooltip="Strikethrough (Ctrl+Shift+S)"
+            >
+              <Strikethrough className="h-4 w-4" />
             </ToolbarButton>
           </div>
 
@@ -263,6 +334,61 @@ export function WritingEditor({
             </ToolbarButton>
           </div>
 
+          {/* Alignment */}
+          <div className="flex items-center gap-0.5 px-2 border-r">
+            <ToolbarButton
+              onClick={() => editor.chain().focus().setTextAlign('left').run()}
+              isActive={editor.isActive({ textAlign: 'left' })}
+              tooltip="Align left"
+            >
+              <AlignLeft className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().setTextAlign('center').run()}
+              isActive={editor.isActive({ textAlign: 'center' })}
+              tooltip="Align center"
+            >
+              <AlignCenter className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().setTextAlign('right').run()}
+              isActive={editor.isActive({ textAlign: 'right' })}
+              tooltip="Align right"
+            >
+              <AlignRight className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+              isActive={editor.isActive({ textAlign: 'justify' })}
+              tooltip="Justify"
+            >
+              <AlignJustify className="h-4 w-4" />
+            </ToolbarButton>
+          </div>
+
+          {/* Insert */}
+          <div className="flex items-center gap-0.5 px-2 border-r">
+            <ToolbarButton
+              onClick={handleSetLink}
+              isActive={editor.isActive('link')}
+              tooltip="Insert link"
+            >
+              <Link2 className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              tooltip="Horizontal rule"
+            >
+              <Minus className="h-4 w-4" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+              tooltip="Clear formatting"
+            >
+              <RemoveFormatting className="h-4 w-4" />
+            </ToolbarButton>
+          </div>
+
           {/* Undo/Redo */}
           <div className="flex items-center gap-0.5 pl-2">
             <ToolbarButton
@@ -283,12 +409,13 @@ export function WritingEditor({
           <div className="flex items-center gap-3 ml-auto text-xs text-gray-500">
             <span>{wordCount} words</span>
             <span>{charCount} characters</span>
+            {wordCount > 0 && <span>{readingTime} min read</span>}
           </div>
         </div>
       )}
 
       {/* Editor Content */}
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
     </div>
   )
 }

@@ -62,10 +62,19 @@ export function LandingNoticeProvider({ children }: { children: React.ReactNode 
                 <p>
                   <span className="font-medium text-[var(--ink)]">Email:</span>{' '}
                   <a
-                    href="mailto:hello@uniportal.com.au"
+                    href="mailto:bernardadjei10@gmail.com"
                     className="focus-ring text-[var(--accent-strong)] transition-colors hover:text-[var(--ink)]"
                   >
-                    hello@uniportal.com.au
+                    bernardadjei10@gmail.com
+                  </a>
+                </p>
+                <p>
+                  <span className="font-medium text-[var(--ink)]">Mobile:</span>{' '}
+                  <a
+                    href="tel:+61410059899"
+                    className="focus-ring text-[var(--accent-strong)] transition-colors hover:text-[var(--ink)]"
+                  >
+                    0410 059 899
                   </a>
                 </p>
               </div>
@@ -80,7 +89,7 @@ export function LandingNoticeProvider({ children }: { children: React.ReactNode 
                 Close
               </button>
               <a
-                href="mailto:hello@uniportal.com.au"
+                href="mailto:bernardadjei10@gmail.com"
                 onClick={() => track('developer_contact_clicked', { source: 'landing_notice' })}
                 className="button-secondary focus-ring w-fit justify-center"
               >

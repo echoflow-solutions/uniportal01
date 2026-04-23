@@ -93,12 +93,8 @@ export function Hero() {
               <em className="italic [font-variation-settings:&quot;opsz&quot;_144,&quot;wght&quot;_580,&quot;SOFT&quot;_100]">
                 actually
               </em>{' '}
-              understand.
+              understand — while they write it.
             </h1>
-
-            <p className="mt-5 font-display text-[clamp(1.5rem,2.4vw,2.5rem)] font-light leading-[1.05] tracking-[-0.04em] text-[var(--graphite)] text-balance">
-              Detection was the old war.
-            </p>
 
             <p className="mt-6 max-w-[58ch] text-[clamp(0.95rem,1vw,1.05rem)] leading-[1.7] text-[var(--graphite)]">
               Every university is in the same fight: AI has made content-detection a losing game.
@@ -149,6 +145,7 @@ export function Hero() {
 
               <div className="mt-8 space-y-5">
                 {[
+                  ['Live', 'Comprehension checks fire during writing, not after', 'var(--verified)'],
                   ['Verified', 'Authorship evidence captured across multiple sessions', 'var(--verified)'],
                   ['Pending', 'Teaching Test scheduled after final submission', 'var(--pending)'],
                   ['Trace', 'Declared quotations and revision depth remain visible', 'var(--accent-strong)'],

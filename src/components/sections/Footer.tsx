@@ -14,7 +14,7 @@ export function Footer() {
           <Link href="#trust-compliance" className="focus-ring transition-colors hover:text-[var(--ink)]">
             Terms
           </Link>
-          <Link href="mailto:hello@uniportal.com.au" className="focus-ring transition-colors hover:text-[var(--ink)]">
+          <Link href="mailto:bernardadjei10@gmail.com" className="focus-ring transition-colors hover:text-[var(--ink)]">
             Contact
           </Link>
         </div>

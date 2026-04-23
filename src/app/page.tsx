@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 import { Nav } from '@/components/sections/Nav'
 import { Hero } from '@/components/sections/Hero'
 import { ProblemStatement } from '@/components/sections/ProblemStatement'
+import { VerifySection } from '@/components/sections/VerifySection'
 import { SDOTFramework } from '@/components/sections/SDOTFramework'
 import { FeatureSequence } from '@/components/sections/FeatureSequence'
 import { PlatformCoverage } from '@/components/sections/PlatformCoverage'
@@ -27,6 +28,7 @@ export default function LandingPage() {
         <Nav />
         <Hero />
         <ProblemStatement />
+        <VerifySection />
         <SDOTFramework />
         <FeatureSequence />
         <PlatformCoverage />
